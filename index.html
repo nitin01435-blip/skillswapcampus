@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkillSwap Campus - Real-time Peer Skill Exchange</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+          <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <i class="fa-solid fa-graduation-cap text-xl"></i>
+          </div>
+          <div>
+            <span class="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              SkillSwap <span class="text-blue-600">Campus</span>
+            </span>
+            <div class="flex items-center space-x-1.5 text-xs text-emerald-600 font-medium">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-green"></span>
+              <span>Firebase Realtime Sync Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Tabs -->
+        <nav class="hidden md:flex space-x-1 lg:space-x-2">
+          <button id="nav-dashboard" onclick="switchTab('dashboard')" class="px-3 py-2 rounded-lg text-sm font-semibold flex items-center space-x-2 transition text-blue-600 bg-blue-50">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+          </button>
+          <button id="nav-marketplace" onclick="switchTab('marketplace')" class="px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Find Swap Partners</span>
+          </button>
+          <button id="nav-matches" onclick="switchTab('matches')" class="px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition text-slate-600 hover:bg-slate-100 relative">
+            <i class="fa-solid fa-handshake"></i>
+            <span>My Matches</span>
+            <span id="match-badge-count" class="hidden absolute -top-1 -right-1 bg-amber-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+          </button>
+          <button id="nav-messages" onclick="switchTab('messages')" class="px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-comments"></i>
+            <span>Messages</span>
+          </button>
+          <button id="nav-video" onclick="switchTab('video')" class="px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-video"></i>
+            <span>Study Room</span>
+          </button>
+          <button id="nav-admin" onclick="switchTab('admin')" class="px-3 py-2 rounded-lg text-sm font-medium flex items-center space-x-2 transition text-slate-600 hover:bg-slate-100">
+            <i class="fa-solid fa-users"></i>
+            <span>Campus Directory</span>
+          </button>
+        </nav>
+
+        <!-- Right Side User Menu / Auth Buttons -->
+        <div class="flex items-center space-x-3" id="user-header-area">
+          <button onclick="openAuthModal('login')" class="text-sm font-semibold text-slate-700 hover:text-blue-600 px-3 py-2">
+            Log In
+          </button>
+          <button onclick="openAuthModal('register')" class="text-sm font-semibold text-white gradient-bg px-4 py-2 rounded-lg shadow hover:opacity-95 transition">
+            Register Student
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Bar -->
+    <div class="md:hidden border-t border-slate-200 bg-white px-2 py-2 flex justify-around text-xs font-medium text-slate-600">
+      <button onclick="switchTab('dashboard')" class="flex flex-col items-center py-1 px-2 text-blue-600">
+        <i class="fa-solid fa-chart-line text-base mb-1"></i>
+        <span>Home</span>
+      </button>
+      <button onclick="switchTab('marketplace')" class="flex flex-col items-center py-1 px-2">
+        <i class="fa-solid fa-magnifying-glass text-base mb-1"></i>
+        <span>Find</span>
+      </button>
+      <button onclick="switchTab('matches')" class="flex flex-col items-center py-1 px-2">
+        <i class="fa-solid fa-handshake text-base mb-1"></i>
+        <span>Matches</span>
+      </button>
+      <button onclick="switchTab('messages')" class="flex flex-col items-center py-1 px-2">
+        <i class="fa-solid fa-comments text-base mb-1"></i>
+        <span>Chat</span>
+      </button>
+      <button onclick="switchTab('video')" class="flex flex-col items-center py-1 px-2">
+        <i class="fa-solid fa-video text-base mb-1"></i>
+        <span>Study</span>
+      </button>
+      <button onclick="switchTab('admin')" class="flex flex-col items-center py-1 px-2">
+        <i class="fa-solid fa-users text-base mb-1"></i>
+        <span>Directory</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Live Multi-Device Sync Toast Notification -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- Main Content Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    
+    <!-- DASHBOARD VIEW -->
+    <section id="view-dashboard" class="space-y-6">
+      
+      <!-- Welcome Hero Banner -->
+      <div class="rounded-2xl gradient-bg text-white p-6 md:p-8 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">
+          <i class="fa-solid fa-people-arrows"></i>
+        </div>
+        <div class="relative z-10 max-w-2xl">
+          <span class="bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md inline-block mb-3">
+            <i class="fa-solid fa-bolt mr-1"></i> Realtime Multi-Device Sync
+          </span>
+          <h1 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">
+            Learn Skills. Teach Skills. Win Together.
+          </h1>
+          <p class="text-blue-100 text-sm md:text-base leading-relaxed mb-6">
+            SkillSwap Campus connects students across faculties to exchange knowledge in real time. Learn Python from a CS senior in exchange for teaching Graphic Design!
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="switchTab('marketplace')" class="bg-white text-blue-600 font-bold px-5 py-2.5 rounded-xl shadow-md hover:bg-slate-100 transition flex items-center gap-2">
+              <i class="fa-solid fa-search"></i> Find Swap Partner
+            </button>
+            <button onclick="openAuthModal('register')" id="hero-register-btn" class="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-5 py-2.5 rounded-xl border border-blue-400/30 transition flex items-center gap-2">
+              <i class="fa-solid fa-user-plus"></i> Join Campus Network
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Sync Metrics Bar -->
+      <div>
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-chart-pie text-blue-600"></i> Live Campus Metrics
+          </h2>
+          <span class="text-xs text-slate-500 font-medium">
+            <i class="fa-solid fa-arrows-rotate text-emerald-500 mr-1 animate-spin"></i> Live auto-update across devices
+          </span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-blue-600 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Students</span>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                <i class="fa-solid fa-users text-blue-600"></i>
+              </div>
+            </div>
+            <div class="text-3xl font-extrabold text-slate-900" id="stat-active-students">0</div>
+            <p class="text-xs text-slate-500 mt-1">Registered & synchronized</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-indigo-600 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Swap Matches</span>
+              <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center">
+                <i class="fa-solid fa-handshake text-indigo-600"></i>
+              </div>
+            </div>
+            <div class="text-3xl font-extrabold text-slate-900" id="stat-skill-matches">0</div>
+            <p class="text-xs text-slate-500 mt-1">Connected peer swaps</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-emerald-600 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Sessions Completed</span>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-emerald-600"></i>
+              </div>
+            </div>
+            <div class="text-3xl font-extrabold text-slate-900" id="stat-sessions-completed">0</div>
+            <p class="text-xs text-slate-500 mt-1">Verified study hours</p>
+          </div>
+
+          <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between text-amber-600 mb-2">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Unique Skills</span>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                <i class="fa-solid fa-lightbulb text-amber-600"></i>
+              </div>
+            </div>
+            <div class="text-3xl font-extrabold text-slate-900" id="stat-unique-skills">0</div>
+            <p class="text-xs text-slate-500 mt-1">Available for exchange</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quick How it Works & Live Feed Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Popular Skills on Campus -->
+        <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-fire text-amber-500"></i> Top Trending Skills to Learn & Teach
+          </h3>
+          <div id="skills-cloud" class="flex flex-wrap gap-2 mb-6">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Featured Peer Matches Preview -->
+          <div class="border-t border-slate-100 pt-5">
+            <div class="flex justify-between items-center mb-4">
+              <h4 class="text-sm font-bold text-slate-800">Recently Active Peer Swap Profiles</h4>
+              <button onclick="switchTab('marketplace')" class="text-xs font-semibold text-blue-600 hover:underline">View All &rarr;</button>
+            </div>
+            <div id="featured-students-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Realtime Activity Stream -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-satellite-dish text-emerald-500"></i> Live Activity Feed
+            </h3>
+            <span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">REALTIME</span>
+          </div>
+          <div id="live-activity-stream" class="flex-grow space-y-4 overflow-y-auto max-h-[380px] custom-scrollbar pr-1">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- FIND SWAP PARTNERS (MARKETPLACE) VIEW -->
+    <section id="view-marketplace" class="hidden space-y-6">
+      
+      <!-- Marketplace Header & Filter Bar -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-extrabold text-slate-900">Find Skill Swap Partners</h2>
+            <p class="text-sm text-slate-500">Discover peers on campus offering skills you want to learn.</p>
+          </div>
+          <!-- Search input -->
+          <div class="relative w-full md:w-80">
+            <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
+            <input type="text" id="marketplace-search-input" oninput="filterMarketplace()" placeholder="Search by name, skill, or course..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+          </div>
+        </div>
+
+        <!-- Filter Tags -->
+        <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100" id="category-filter-bar">
+          <span class="text-xs font-semibold text-slate-400 mr-2">Filter:</span>
+          <button onclick="setFilterCategory('ALL')" class="category-btn active px-3 py-1 rounded-full text-xs font-semibold bg-blue-600 text-white transition">All Students</button>
+          <button onclick="setFilterCategory('Coding')" class="category-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Coding & Dev</button>
+          <button onclick="setFilterCategory('Design')" class="category-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Design & UI</button>
+          <button onclick="setFilterCategory('Business')" class="category-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Business & MBA</button>
+          <button onclick="setFilterCategory('Math')" class="category-btn px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Math & Science</button>
+        </div>
+      </div>
+
+      <!-- Marketplace Cards Grid -->
+      <div id="marketplace-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamic Cards -->
+      </div>
+
+    </section>
+
+    <!-- MY MATCHES & REQUESTS VIEW -->
+    <section id="view-matches" class="hidden space-y-6">
+      
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between md:items-center gap-4">
+        <div>
+          <h2 class="text-2xl font-extrabold text-slate-900">My Skill Swap Matches</h2>
+          <p class="text-sm text-slate-500">Manage incoming requests, active exchanges, and pending connections.</p>
+        </div>
+        <div class="flex space-x-2">
+          <button onclick="filterMatchesTab('active')" id="btn-matches-active" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white">Active Connections</button>
+          <button onclick="filterMatchesTab('pending')" id="btn-matches-pending" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">Pending Requests</button>
+        </div>
+      </div>
+
+      <div id="matches-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Dynamically filled -->
+      </div>
+
+    </section>
+
+    <!-- MESSAGES VIEW -->
+    <section id="view-messages" class="hidden h-[75vh] bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col md:flex-row">
+      
+      <!-- User List Side Panel -->
+      <div class="w-full md:w-80 border-r border-slate-200 flex flex-col bg-slate-50/50">
+        <div class="p-4 border-b border-slate-200">
+          <h3 class="font-bold text-slate-900 text-lg">Direct Messages</h3>
+          <p class="text-xs text-slate-500">Realtime sync across devices</p>
+        </div>
+        <div id="messages-user-list" class="flex-grow overflow-y-auto custom-scrollbar divide-y divide-slate-100">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Chat Main Container -->
+      <div class="flex-grow flex flex-col bg-white">
+        <div id="chat-header" class="p-4 border-b border-slate-200 flex items-center justify-between bg-white">
+          <div class="flex items-center space-x-3" id="chat-header-info">
+            <span class="text-sm font-semibold text-slate-500">Select a peer student on the left to start chatting</span>
+          </div>
+          <div id="chat-header-actions" class="hidden flex items-center space-x-2">
+            <button onclick="startInstantVideoCall()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-video"></i> Start Video Room
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat History -->
+        <div id="chat-history" class="flex-grow p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-50/30">
+          <div class="flex items-center justify-center h-full text-slate-400 text-sm">
+            <div class="text-center">
+              <i class="fa-solid fa-comments text-4xl mb-2 text-slate-300"></i>
+              <p>No chat session selected</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form id="chat-form" onsubmit="sendChatMessage(event)" class="p-3 border-t border-slate-200 flex items-center space-x-2 bg-white">
+          <input type="text" id="chat-input-text" placeholder="Type your message here..." class="flex-grow px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500" disabled>
+          <button type="submit" id="chat-send-btn" class="px-4 py-2.5 gradient-bg text-white font-bold rounded-xl shadow hover:opacity-95 transition disabled:opacity-50" disabled>
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- INTEGRATED VOICE & VIDEO CALL MODULE VIEW -->
+    <section id="view-video" class="hidden space-y-6">
+      
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full uppercase tracking-wider mb-2 inline-block">
+            <i class="fa-solid fa-circle text-[8px] mr-1 text-emerald-500"></i> Interactive Study Room
+          </span>
+          <h2 class="text-2xl font-extrabold text-slate-900">Virtual SkillSwap Peer Video Call</h2>
+          <p class="text-sm text-slate-500">Connect face-to-face, share screens, and practice skills together in real time.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <label for="study-room-id" class="text-xs font-bold text-slate-600">Room ID</label>
+          <input id="study-room-id" type="text" value="skillswap-demo-room" maxlength="80" placeholder="Enter same room ID" class="border border-slate-300 rounded-xl px-3 py-2 text-sm w-44" aria-label="Study room ID">
+          <button onclick="toggleVideoCallSession()" id="call-toggle-btn" class="px-5 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow transition flex items-center gap-2">
+            <i class="fa-solid fa-video"></i> Start Live Study Call
+          </button>
+        </div>
+      </div>
+
+      <!-- Video Call Screen Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Main Video Screen -->
+        <div class="lg:col-span-2 bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-800 flex flex-col relative min-h-[420px]">
+          
+          <div class="relative flex-grow bg-slate-950 flex items-center justify-center overflow-hidden">
+            <!-- Actual remote peer video (audio is not muted) -->
+            <video id="remote-video-element" class="w-full h-full object-cover hidden" autoplay playsinline></video>
+            
+            <div id="video-placeholder" class="text-center p-8 text-slate-400">
+              <div class="w-20 h-20 rounded-full bg-slate-800/80 mx-auto flex items-center justify-center text-3xl mb-4 text-blue-400">
+                <i class="fa-solid fa-video-slash"></i>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-1">Study Room Offline</h3>
+              <p class="text-xs text-slate-400 max-w-sm mx-auto">Enter the same Room ID on both devices, then start the call. Allow camera and microphone access.</p>
+            </div>
+
+            <!-- Self Camera Preview Overlay Box -->
+            <div id="local-video-box" class="absolute bottom-4 right-4 w-36 sm:w-48 h-28 sm:h-36 bg-slate-800 rounded-xl border-2 border-blue-500 overflow-hidden shadow-lg hidden">
+              <video id="local-video-element" class="w-full h-full object-cover" autoplay playsinline muted></video>
+              <span class="absolute bottom-1 left-2 text-[10px] bg-black/60 text-white px-1.5 py-0.5 rounded">You</span>
+            </div>
+
+            <!-- Live Status Watermark -->
+            <div id="call-status-badge" class="hidden absolute top-4 left-4 bg-emerald-600/90 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-2 backdrop-blur-md">
+              <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+              <span id="call-timer-text">LIVE - 00:00</span>
+            </div>
+          </div>
+
+          <!-- Video Controls Toolbar -->
+          <div class="bg-slate-900 p-4 border-t border-slate-800 flex items-center justify-center space-x-4">
+            <button id="btn-mic-toggle" onclick="toggleMic()" class="w-12 h-12 rounded-full bg-slate-800 text-white hover:bg-slate-700 transition flex items-center justify-center text-lg" disabled>
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+            <button id="btn-cam-toggle" onclick="toggleCam()" class="w-12 h-12 rounded-full bg-slate-800 text-white hover:bg-slate-700 transition flex items-center justify-center text-lg" disabled>
+              <i class="fa-solid fa-video"></i>
+            </button>
+            <button id="btn-screen-share" onclick="toggleScreenShare()" class="w-12 h-12 rounded-full bg-slate-800 text-white hover:bg-slate-700 transition flex items-center justify-center text-lg" disabled title="Share Screen">
+              <i class="fa-solid fa-desktop"></i>
+            </button>
+            <button id="btn-end-call" onclick="toggleVideoCallSession()" class="w-12 h-12 rounded-full bg-red-600 text-white hover:bg-red-700 transition flex items-center justify-center text-lg shadow-lg shadow-red-600/30" disabled>
+              <i class="fa-solid fa-phone-slash"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- In-Call Study Chat & Whiteboard Notes -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col h-[420px]">
+          <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2 border-b border-slate-100 pb-2">
+            <i class="fa-solid fa-pen-to-square text-blue-600"></i> In-Call Study Notes & Links
+          </h3>
+          <textarea id="study-notes-area" class="w-full flex-grow p-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 custom-scrollbar resize-none mb-3" placeholder="Paste code snippets, formulas, or meeting links here..."></textarea>
+          <div class="flex justify-between items-center text-xs text-slate-500">
+            <span>Synchronized in-call pad</span>
+            <button onclick="copyStudyNotes()" class="text-blue-600 font-bold hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-copy"></i> Copy Notes
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- CAMPUS ADMIN & REALTIME USER DIRECTORY VIEW -->
+    <section id="view-admin" class="hidden space-y-6">
+      
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <h2 class="text-2xl font-extrabold text-slate-900">Campus Student Directory</h2>
+            <span class="bg-emerald-100 text-emerald-800 text-xs font-extrabold px-2.5 py-0.5 rounded-full">Firebase Live Data</span>
+          </div>
+          <p class="text-sm text-slate-500">
+            Realtime directory of all students registered on Firebase. When anyone registers on any device, they show here instantly!
+          </p>
+        </div>
+        <div class="relative w-full md:w-72">
+          <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
+          <input type="text" id="admin-search-input" oninput="renderAdminDirectory()" placeholder="Filter directory by student name..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <tr>
+                <th class="px-6 py-4">Student</th>
+                <th class="px-6 py-4">College ID / Email</th>
+                <th class="px-6 py-4">Course & Year</th>
+                <th class="px-6 py-4">Teaches</th>
+                <th class="px-6 py-4">Wants to Learn</th>
+                <th class="px-6 py-4 text-center">Swaps Done</th>
+                <th class="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body" class="divide-y divide-slate-100 font-medium text-slate-700">
+              <!-- Populated dynamically from Firebase -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- AUTHENTICATION MODAL (LOGIN & REGISTER) -->
+  <div id="auth-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
+      
+      <!-- Close Button -->
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <!-- Auth Switcher Tabs -->
+      <div class="flex border-b border-slate-200 mb-6">
+        <button id="auth-tab-register" onclick="switchAuthTab('register')" class="flex-1 pb-3 text-center text-sm font-bold border-b-2 border-blue-600 text-blue-600">
+          Register Student
+        </button>
+        <button id="auth-tab-login" onclick="switchAuthTab('login')" class="flex-1 pb-3 text-center text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-600">
+          Student Log In
+        </button>
+      </div>
+
+      <!-- Red Alert Error Box -->
+      <div id="auth-error-box" class="hidden mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-center space-x-2">
+        <i class="fa-solid fa-triangle-exclamation text-red-500 text-base"></i>
+        <span id="auth-error-msg"></span>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <form id="form-register" onsubmit="handleRegistration(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Full Name</label>
+          <input type="text" id="reg-name" required placeholder="e.g.Enter name" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">College ID</label>
+            <input type="email" id="reg-email" required placeholder="collegid@campus.edu" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password</label>
+            <input type="password" id="reg-password" required placeholder="••••••••" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Degree Course</label>
+            <select id="reg-course" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+              <option value="B.Tech Computer Science">B.Tech CSE</option>
+              <option value="B.Tech Data Science">B.Tech Data Science</option>
+              <option value="B.Tech AIML">B.Tech AIML</option>
+              <option value="BCA">BCA</option>
+                    </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Academic Year</label>
+            <select id="reg-year" required class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Skills I Can Teach <span class="text-slate-400 font-normal">(comma separated)</span></label>
+          <input type="text" id="reg-skills-teach" required placeholder="Python, React, Data Structures" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Skills I Want to Learn <span class="text-slate-400 font-normal">(comma separated)</span></label>
+          <input type="text" id="reg-skills-learn" required placeholder="Figma, Machine Learning, UI Design" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Short Bio</label>
+          <textarea id="reg-bio" rows="2" placeholder="Passionate student looking to trade knowledge..." class="w-full px-4 py-2 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"></textarea>
+        </div>
+
+        <button type="submit" id="reg-submit-btn" class="w-full py-3 gradient-bg text-white font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Save & Register to Firebase
+        </button>
+      </form>
+
+      <!-- LOGIN FORM -->
+      <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4 hidden">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1"> Student ID</label>
+          <input type="email" id="login-email" required placeholder="1234567@campus.edu" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password</label>
+          <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <button type="submit" id="login-submit-btn" class="w-full py-3 gradient-bg text-white font-bold rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-right-to-bracket"></i> Verify & Log In
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- PROFILE DETAIL MODAL -->
+  <div id="profile-detail-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative border border-slate-100">
+      <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div id="profile-modal-content">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase JS SDK 11.6.1 -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
